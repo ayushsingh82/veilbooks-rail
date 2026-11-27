@@ -21,6 +21,7 @@ cd rollup
 npm install
 npm test        # ledger, attack cases, sealed manifest, receipt verifier
 npm run demo    # deposit, payroll run, sealed manifest, honest and forged batches
+npm run seal-manifest -- run.json   # seal a manifest exported from Veilbooks Desk
 npm run judge   # watchtower replays a history and catches 5 attacks plus 1 control
 ```
 

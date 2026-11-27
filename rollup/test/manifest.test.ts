@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { manifestDigest, manifestTotal, memberKeys, openManifest, sealManifest, type Manifest } from "../src/manifest.js";
+import { manifestDigest, manifestTotal, memberKeys, openManifest, parseManifest, sealManifest, type Manifest } from "../src/manifest.js";
 
 const m: Manifest = { runId: "payroll-nov", lines: [
   { invoiceId: "b", payee: "qor1bob", amountUqor: "3000000" },
@@ -31,4 +31,13 @@ describe("sealed manifest", () => {
   it("the envelope does not contain the amounts in clear", () => {
     expect(Buffer.from(sealed.envelope).includes(Buffer.from("3000000"))).toBe(false);
   });
+});
+
+describe("parseManifest", () => {
+  const P = "qor1" + "a".repeat(38);
+  const ok = JSON.stringify({ runId: "r", lines: [{ invoiceId: "i1", payee: P, amountUqor: "5" }] });
+  it("accepts a good manifest", () => expect(parseManifest(ok).lines).toHaveLength(1));
+  it("rejects a duplicate invoice id", () => expect(() => parseManifest(JSON.stringify({ runId: "r", lines: [{ invoiceId: "i", payee: P, amountUqor: "5" }, { invoiceId: "i", payee: P, amountUqor: "6" }] }))).toThrow(/duplicate/));
+  it("rejects a bad amount", () => expect(() => parseManifest(JSON.stringify({ runId: "r", lines: [{ invoiceId: "i", payee: P, amountUqor: "-1" }] }))).toThrow(/amount/));
+  it("drops extra fields such as names", () => expect(JSON.stringify(parseManifest(JSON.stringify({ runId: "r", lines: [{ invoiceId: "i", payee: P, amountUqor: "5", name: "Ann" }] })))).not.toMatch(/Ann/));
 });

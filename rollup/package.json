@@ -14,7 +14,8 @@
     "test": "vitest run",
     "demo": "tsx src/demo.ts",
     "flow": "tsx src/flow.ts",
-    "judge": "tsx src/judge.ts"
+    "judge": "tsx src/judge.ts",
+    "seal-manifest": "tsx src/seal-manifest.ts"
   },
   "dependencies": {
     "@cosmjs/proto-signing": "^0.39.0",
