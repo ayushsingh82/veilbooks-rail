@@ -28,6 +28,7 @@ interface Saved {
   seeds: Record<string, string>; // name -> 32-byte seed hex
   nonces: Record<string, string>; // name -> next nonce (decimal)
   ledger: { id: string; balance: string; nonce: string }[]; // state after the last submitted batch
+  withdrawals?: Record<string, { index: string; recipient: string; amount: string }[]>; // batch index -> withdrawals it committed
 }
 
 function load(): Saved {
@@ -89,15 +90,35 @@ async function main() {
     s.nonces.payer = (nonce + 1n).toString();
     save(s);
     console.log(`Posted transfer ${a2} QOR payer -> ${a1} (nonce ${nonce})  tx ${res.transactionHash} (code ${res.code})`);
+  } else if (cmd === "withdraw") {
+    if (!a1 || !a2) throw new Error("usage: withdraw <name> <QOR>   (pays out to the operator address)");
+    const from = account(s, a1);
+    const nonce = BigInt(s.nonces[a1] ?? "0");
+    const { signQledgerTx } = await import("@qorechain/rdk");
+    const signed = signQledgerTx({ chainId: CHAIN_ID, rollupId: ROLLUP_ID, secretKey: from.secretKey, publicKey: from.publicKey, nonce, amount: BigInt(qorToUqor(Number(a2))), recipient: tx.address });
+    const res = await tx.postRollupData({ rollupId: ROLLUP_ID, data: encodeQledgerTx(signed) });
+    s.nonces[a1] = (nonce + 1n).toString();
+    save(s);
+    console.log(`Posted withdrawal ${a2} QOR from ${a1} to ${tx.address} (nonce ${nonce})  tx ${res.transactionHash} (code ${res.code})`);
+  } else if (cmd === "execute") {
+    const batchIndex = a1 ?? "";
+    const ws = (s.withdrawals?.[batchIndex] ?? []).map((w) => ({ index: BigInt(w.index), recipient: w.recipient, amount: BigInt(w.amount) }));
+    const i = Number(a2 ?? "0");
+    const w = ws[i];
+    if (!w) throw new Error(`batch ${batchIndex} has no withdrawal ${i} in .accounts.json`);
+    const { qledgerWithdrawalProof } = await import("@qorechain/rdk");
+    const res = await tx.executeWithdrawal({ rollupId: ROLLUP_ID, batchIndex, withdrawalIndex: w.index, recipient: w.recipient, denom: "uqor", amount: w.amount, proof: qledgerWithdrawalProof(CHAIN_ID, ROLLUP_ID, ws, i) });
+    console.log(`Executed withdrawal ${w.index} (${Number(w.amount) / 1e6} QOR to ${w.recipient})  tx ${res.transactionHash} (code ${res.code})`);
   } else if (cmd === "batch") {
     const plan: QledgerBatchPlan = await planQledgerBatch(client.rest, { chainId: CHAIN_ID, rollupId: ROLLUP_ID, submitter: tx.address, ledger: ledgerOf(s) });
     console.log(`Batch ${plan.input.batchIndex}: ${plan.input.txCount} entries, stateRoot ${bytesToHex(plan.input.stateRoot).slice(0, 16)}…, inboxEnd ${plan.input.inboxEnd}`);
     const res = await tx.submitBatch(plan.input);
     saveLedger(s, plan.ledger);
+    if (plan.result.withdrawals.length) (s.withdrawals ??= {})[String(plan.input.batchIndex)] = plan.result.withdrawals.map((w) => ({ index: w.index.toString(), recipient: w.recipient, amount: w.amount.toString() }));
     save(s);
     console.log(`Submitted: ${res.transactionHash} (code ${res.code}); withdrawals in this batch: ${plan.result.withdrawals.length}`);
   } else {
-    console.log("commands: status | bond | deposit <QOR> | pay <name> <QOR> | batch");
+    console.log("commands: status | bond | deposit <QOR> | pay <name> <QOR> | withdraw <name> <QOR> | batch | execute <batchIndex> [i]");
   }
 }
 
