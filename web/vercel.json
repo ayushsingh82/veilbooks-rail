@@ -1,0 +1,1 @@
+{ "rewrites": [{ "source": "/chain/:path*", "destination": "https://api-testnet.qore.host/:path*" }], "buildCommand": "npm run build", "outputDirectory": "dist" }

@@ -1,7 +1,7 @@
 import { executeQledger, type QledgerEntry, type QledgerLedger } from "@qorechain/rdk";
 import { CHAIN_ID, ROLLUP_ID } from "./sim.js";
 
-const hex = (b: Uint8Array) => Buffer.from(b).toString("hex");
+const hex = (b: Uint8Array) => Array.from(b, (x) => x.toString(16).padStart(2, "0")).join("");
 
 /** What a batch claims on chain. */
 export interface BatchClaim {
