@@ -21,6 +21,7 @@ cd rollup
 npm install
 npm test        # ledger, attack cases, sealed manifest, receipt verifier
 npm run demo    # deposit, payroll run, sealed manifest, honest and forged batches
+npm run judge   # watchtower replays a history and catches 5 attacks plus 1 control
 ```
 
 The demo needs no network and no funds.
@@ -42,6 +43,8 @@ The demo needs no network and no funds.
 | `rollup/src/manifest.ts` | Sealed payment manifests |
 | `rollup/src/receipt.ts` | Batch receipt verifier |
 | `rollup/src/demo.ts` | Offline walk-through |
+| `rollup/src/watchtower.ts` | Replays posted batches and reports the first bad one as a challenge |
+| `rollup/src/judge.ts` | Attack checks a judge can run offline |
 | `rollup/src/{doctor,create,submit-batch,query-status}.ts` | Operator scripts for the testnet |
 
 ## Status and limits
