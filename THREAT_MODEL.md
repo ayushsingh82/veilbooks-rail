@@ -23,6 +23,7 @@ A `qledger-v1` optimistic rollup on the QoreChain testnet. Accounts are ML-DSA-4
 | Stranger | Sign with their own key to move another account's funds | Only their own account is affected | **tested** |
 | Dishonest operator | Publish a state root that does not match the inbox | Re-execution gives a different root; `verifyBatch` flags it. On chain, a challenger wins during the challenge window. | **tested** (verifier); on-chain challenge **planned** |
 | Dishonest operator | Publish a wrong parent root, or skip a posted entry | Flagged by `verifyBatch` | **tested** |
+| Dishonest operator | Replay an old batch, skip a batch index, or forge a root deep in a history | The watchtower replays the history in order and reports the first bad batch with the roots it should have published | **tested** (`npm run judge`); posting the challenge on chain **planned** |
 | Observer of the chain | Read manifest contents | Manifests are ML-KEM envelopes; amounts do not appear in the posted bytes | **tested** (no plaintext amount in envelope); only members can open |
 | Non-member | Open a sealed manifest | Refused | **tested** |
 | Quantum-capable attacker (later) | Harvest posted envelopes now, break them later | ML-KEM-1024 is designed to resist this | Relies on the library, not tested here |
@@ -37,4 +38,4 @@ A `qledger-v1` optimistic rollup on the QoreChain testnet. Accounts are ML-DSA-4
 - **Testnet:** all keys and funds are test-only.
 
 ## How to check
-`cd rollup && npm install && npm test`
+`cd rollup && npm install && npm test && npm run judge`
