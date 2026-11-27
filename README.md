@@ -50,7 +50,8 @@ The demo needs no network and no funds.
 
 ## Status and limits
 
-- The offline logic is complete and tested. Creating the rollup, bonding a submitter, depositing and submitting batches on the testnet is not yet done: it needs a funded operator account.
+- The offline logic is complete and tested, and the full flow has run on the QoreChain testnet (`qorechain-diana`): the rollup `veilbooks-rail` is active, a submitter is bonded (1,000 QOR), 100 QOR was deposited, two transfers were posted, and batch 0 (3 entries) was submitted. The state root on chain, `9bff8066cc904e14819cdcd25adad126e0994593d489361b553a2111a9b9af6d`, matches the root computed locally.
+- The batch is inside its challenge window. Finalising it and withdrawing are not yet done.
 - The rollup moves **uqor only**, and its only account scheme is ML-DSA-44.
 - A single dedicated operator submits batches. Forced exit through the inbox is planned, not built.
 
@@ -72,3 +73,13 @@ Veilbooks keeps business payment amounts private, with signatures and encryption
 ## Licence and AI use
 
 Apache-2.0. See [AI_USAGE.md](AI_USAGE.md) for how AI tools were used.
+
+## Testnet run
+
+| Step | Transaction |
+| --- | --- |
+| Bond submitter | `94AD97EC68833F7D0FBD323E9A74DE00F21F0FAB9C45265C85C000AC2DA7348B` |
+| Deposit 100 QOR | `880AB1CBD4CEC98336BAA60419E351C735E5C920DAD0694F8CD3FEF71EC057E6` |
+| Transfer 20 QOR | `2A0769C7B4276C9CD4F2B09F67378F416CBB56C3E3CB487348297438E7207C52` |
+| Transfer 30 QOR | `E7821FC9759E8E5F5117E229B00E208447E7238C451CB2907DA9ADE0D12B167E` |
+| Submit batch 0 | `4A6FE51A66D5B0652C7E035BFC41A1850F0E2CF2D484E55A8125AAAF0C79D6B1` |
