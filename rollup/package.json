@@ -11,7 +11,8 @@
     "doctor": "tsx src/doctor.ts",
     "status": "tsx src/status.ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "demo": "tsx src/demo.ts"
   },
   "dependencies": {
     "@cosmjs/proto-signing": "^0.39.0",

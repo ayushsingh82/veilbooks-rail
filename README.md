@@ -10,6 +10,14 @@ Entry in the QoreChain "Build Before Q-Day" developer fest, category: Protocol B
 
 _Work in progress._
 
+## Try it (no wallet, no funds)
+```sh
+cd rollup && npm install
+npm test        # 19 tests: ledger, attacks, sealed manifest, receipt verifier
+npm run demo    # deposit, payroll run, sealed manifest, honest and forged batches
+```
+The on-chain steps (create rollup, bond, deposit, post, submit batch) need a funded operator and are not done yet. See [THREAT_MODEL.md](THREAT_MODEL.md) for what is and is not protected.
+
 ## Status
 Work in progress for the QoreChain "Build Before Q-Day" developer fest (deadline 2 December 2026). Network: QoreChain testnet `qorechain-diana`.
 
