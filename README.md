@@ -123,9 +123,10 @@ The full flow has run on the QoreChain testnet (`qorechain-diana`). The rollup `
 | Transfer 30 QOR | done | `E7821FC9759E8E5F5117E229B00E208447E7238C451CB2907DA9ADE0D12B167E` |
 | Submit batch 0 (3 entries) | finalized | `4A6FE51A66D5B0652C7E035BFC41A1850F0E2CF2D484E55A8125AAAF0C79D6B1` |
 | Post a 5 QOR withdrawal | done | `61296DBD2BED5F70B89CE73146FFA95DFAE7DFA89C39B9C89F2965DFF985AA62` |
-| Submit batch 1 (carries the withdrawal) | in its challenge window | `95FB7D680E9581B3AEB9BDA6218B3021DC773286257BDE63404281241D78A388` |
+| Submit batch 1 (carries the withdrawal) | finalized | `95FB7D680E9581B3AEB9BDA6218B3021DC773286257BDE63404281241D78A388` |
+| Execute the 5 QOR withdrawal with its proof | paid out to the operator address | `70DD28CFB76276917D504209CAED8678F0C9AB59A75EA17F0217BD9F3E4DE8BE` |
 
-The state root on chain for batch 0, `9bff8066cc904e14819cdcd25adad126e0994593d489361b553a2111a9b9af6d`, matches the root computed locally. Executing the withdrawal comes after batch 1 finalizes.
+The state root on chain for batch 0, `9bff8066cc904e14819cdcd25adad126e0994593d489361b553a2111a9b9af6d`, matches the root computed locally. The withdrawal was executed after batch 1 finalized: the operator balance rose by 4.956716 QOR, which is the 5 QOR withdrawn minus a 0.043284 QOR transaction fee.
 
 ## Quick start
 
@@ -210,7 +211,7 @@ Copy `rollup/.env.example` to `rollup/.env` and set `QORE_MNEMONIC` (or `QORE_OP
 
 - The rollup moves **uqor only**, and its only account scheme is **ML-DSA-44**.
 - A **single operator** submits batches. Forced exit through the inbox is planned, not built.
-- Posting a challenge on chain is **planned**. The watchtower builds the challenge but does not send it.
+- The full path deposit, transfer, batch, finalize and withdraw has run on the testnet. Posting a challenge on chain is **planned**. The watchtower builds the challenge but does not send it.
 - Poster addresses, post sizes and timing are public.
 - Anyone in a manifest's member list can read the whole manifest, including the auditor.
 - All keys and funds are for the testnet.

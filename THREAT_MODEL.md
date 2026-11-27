@@ -28,6 +28,11 @@ A `qledger-v1` optimistic rollup on the QoreChain testnet. Accounts are ML-DSA-4
 | Non-member | Open a sealed manifest | Refused | **tested** |
 | Quantum-capable attacker (later) | Harvest posted envelopes now, break them later | ML-KEM-1024 is designed to resist this | Relies on the library, not tested here |
 
+## Observed on the testnet
+- Batch 0 and batch 1 were submitted by the operator and finalized after the 60 minute challenge window with no challenge. The roots on chain matched the roots computed locally for batch 0.
+- A 5 QOR withdrawal was paid out only after its batch finalized, using a Merkle proof against the batch's withdrawals root (tx `70DD28CFB76276917D504209CAED8678F0C9AB59A75EA17F0217BD9F3E4DE8BE`).
+- No dishonest batch was posted on chain, so no on-chain challenge has been exercised. The watchtower attacks are tested offline.
+
 ## Not protected / known limits
 - **Currency:** uqor only. No other tokens.
 - **Scheme:** the rollup's account scheme is ML-DSA-44, not ML-DSA-87. This is the rollup's only supported scheme.
