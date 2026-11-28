@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { runScenarios } from "../../rollup/src/scenarios";
+import { Footer, Hero, Navbar, Steps } from "./chrome";
 
 const ROLLUP = "veilbooks-rail";
 const B = "/chain/qorechain/rdk/v1";
@@ -31,12 +32,33 @@ export function App() {
   const links = batches.map((b, i) => (i === 0 ? null : b.prev_state_root === batches[i - 1]!.state_root));
   const allLinked = links.every((l) => l !== false);
 
+  const jump = (id: string) => () => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   return (
-    <main>
-      <h1>Veilbooks Rail</h1>
-      <p className="sub">A private payment rollup on QoreChain testnet. This page reads the live rollup from the chain and runs the watchtower attack checks in your browser.</p>
+    <>
+      <Navbar
+        kind="rail"
+        name="Veilbooks Rail"
+        items={[{ label: "Rollup", href: "#rollup" }, { label: "Batches", href: "#batches" }, { label: "Watchtower", href: "#watchtower" }]}
+        cta={{ label: "Run the checks", onClick: jump("watchtower") }}
+      />
+      <main>
+      <Hero
+        kicker="Settlement rollup"
+        title="Settle payroll."
+        accent="Without showing it."
+        lead="A private payment rollup on QoreChain. Accounts use post-quantum keys, payment manifests are sealed, and anyone can replay a batch to check that the operator told the truth."
+        chips={[{ text: "Live on testnet", hot: true }, { text: "ML-DSA-44 accounts" }, { text: "Optimistic, fraud-checked" }, { text: "Withdrawals with proofs" }]}
+      />
+      <Steps
+        steps={[
+          { title: "Deposit", text: "Put uqor into a rollup account controlled by a post-quantum key." },
+          { title: "Pay", text: "Signed transfers go to the inbox, one per person. Manifests stay sealed." },
+          { title: "Batch", text: "The operator posts a state root. Anyone can replay it from public data." },
+          { title: "Withdraw", text: "After the challenge window, recipients withdraw with a Merkle proof." },
+        ]}
+      />
 
-      <section className="panel">
+      <section className="panel" id="rollup">
         <h2>1. The rollup on chain</h2>
         {error && <p className="badtxt">Could not read the chain: {error}</p>}
         {rollup && (
@@ -53,7 +75,7 @@ export function App() {
         )}
       </section>
 
-      <section className="panel">
+      <section className="panel" id="batches">
         <h2>2. Batches and receipts</h2>
         <p className={allLinked ? "good" : "badtxt"}>{batches.length ? (allLinked ? "Every batch starts from the state root of the one before it." : "A batch does not start from the previous batch's root.") : "Loading…"}</p>
         <table>
@@ -75,7 +97,7 @@ export function App() {
         <p className="note">To check a batch's contents too, replay its entries from the previous ledger. <code>npm run judge</code> in <code>rollup/</code> does this for a history it builds itself.</p>
       </section>
 
-      <section className="panel">
+      <section className="panel" id="watchtower">
         <h2>3. Watchtower attack checks</h2>
         <p className="note">An honest three-batch history is built here, then attacked six ways. The watchtower replays each batch and must raise a challenge for every attack and none for the control.</p>
         <table>
@@ -87,6 +109,16 @@ export function App() {
           </tbody>
         </table>
       </section>
-    </main>
+      </main>
+      <Footer
+        kind="rail"
+        name="Veilbooks Rail"
+        blurb="The quantum-safe settlement rail for private business payments."
+        links={[
+          { title: "Rail", items: [["The rollup", "#rollup"], ["Batches", "#batches"], ["Watchtower", "#watchtower"]] },
+          { title: "Docs", items: [["Threat model", "https://github.com/ayushsingh82/veilbooks-rail/blob/main/THREAT_MODEL.md"], ["Testnet run", "https://github.com/ayushsingh82/veilbooks-rail#live-testnet-run"], ["Source", "https://github.com/ayushsingh82/veilbooks-rail"]] },
+        ]}
+      />
+    </>
   );
 }
