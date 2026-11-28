@@ -20,6 +20,10 @@
   <a href="AI_USAGE.md">AI use</a>
 </p>
 
+<p align="center">
+  <img src="docs/screenshot.png" alt="Veilbooks Rail: live rollup, finalized batches and watchtower attack checks" width="880">
+</p>
+
 ---
 
 ## Contents
